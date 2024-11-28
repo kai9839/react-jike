@@ -1,0 +1,26 @@
+.login {
+  width: 100vw;
+  height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: center/cover no-repeat url('../../assets/imgs/login.png');
+
+  .login-container {
+    width: 440px;
+    height: 360px;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .login-logo {
+    width: 200px;
+    height: 60px;
+    display: block;
+    margin: 0 auto 20px;
+  }
+
+}
