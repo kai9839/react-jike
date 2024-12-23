@@ -6,6 +6,10 @@ import { RouterProvider } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import reportWebVitals from './reportWebVitals';
 import store from './store';
+import 'normalize.css'
+
+// import showMessage from './utils/message';
+import './utils/message'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

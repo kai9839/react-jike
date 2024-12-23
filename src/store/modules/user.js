@@ -6,7 +6,7 @@ const userSlice = createSlice({
   // 数据状态
   initialState: {
     userInfo: {},
-    token: '',
+    token: localStorage.getItem('token') || '',
   },
   // 同步修改方法
   reducers: {
@@ -15,6 +15,7 @@ const userSlice = createSlice({
     },
     setToken(state, action) {
       state.token = action.payload;
+      localStorage.setItem('token', action.payload)
     },
   },
 });
@@ -32,11 +33,27 @@ const fetchLogin = (loginForm) => {
     // 1.保存token
     dispatch(setToken(res.data.token));
     localStorage.setItem("token", res.data.token);
-    // 2.保存用户信息
-    dispatch(setUserInfo(res.data.userInfo));
+    
   };
 };
 
-export { fetchLogin }
+const fetchUserInfo = () => {
+  return async (dispatch) => {
+    const res = await http.get("/user/profile");
+    dispatch(setUserInfo(res.data));
+    localStorage.setItem("userInfo", JSON.stringify(res.data))
+  };
+};
+
+const clearUserInfo = () => {
+  return async (dispatch) => {
+    dispatch(setUserInfo({}));
+    dispatch(setToken(""));
+    localStorage.removeItem("token");
+    localStorage.removeItem("userInfo")
+  };
+};
+
+export { fetchLogin, fetchUserInfo, clearUserInfo }
 
 export default userReducer;

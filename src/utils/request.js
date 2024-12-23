@@ -1,4 +1,6 @@
+import router from "@/router";
 import axios from "axios";
+import { message } from "antd";
 
 const http = axios.create({
   baseURL: "http://geek.itheima.net/v1_0",
@@ -29,6 +31,16 @@ http.interceptors.response.use(
     return response.data;
   },
   (error) => {
+    console.dir(error)
+    // 401
+    if (error.response.status === 401) {
+      // 清除token
+      window.localStorage.removeItem("token");
+      // 跳转登录页
+      router.navigate("/login");
+      message.warning("登录失效，请重新登录");
+      window.location.reload();
+    }
     return Promise.reject(error);
   }
 )
