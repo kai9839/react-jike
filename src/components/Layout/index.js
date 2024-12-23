@@ -1,4 +1,4 @@
-import { Layout, Menu, message, Popconfirm } from 'antd'
+import { Layout, Menu, Popconfirm } from 'antd'
 import {
   HomeOutlined,
   DiffOutlined,
