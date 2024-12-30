@@ -17,7 +17,6 @@ http.interceptors.request.use(
       // 3.设置token到请求头
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log(config)
     return config;
   }, 
   (error) => {

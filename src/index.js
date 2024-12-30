@@ -11,11 +11,19 @@ import 'normalize.css'
 // import showMessage from './utils/message';
 import './utils/message'
 
+import { ConfigProvider } from 'antd';
+import zh_CN from 'antd/es/locale/zh_CN';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+dayjs.locale('zh-cn');
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router}/>
+      <ConfigProvider locale={zh_CN}>
+        <RouterProvider router={router}/>
+      </ConfigProvider>
     </Provider>
   </React.StrictMode>
 );
