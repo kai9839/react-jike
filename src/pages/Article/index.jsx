@@ -10,7 +10,8 @@ import {
   Table,
   Tag,
   Popconfirm,
-  message
+  message,
+  Image
 } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import img404 from "@/assets/imgs/error.png";
@@ -32,7 +33,7 @@ const Article = () => {
 
   const [params, setParams] = useState({
     page: 1,
-    per_page: 3,
+    per_page: 10,
     begin_pubdate: null,
     end_pubdate: null,
     status: null,
@@ -81,7 +82,7 @@ const Article = () => {
       width: 120,
       render: (cover) => {
         return (
-          <img src={cover.images[0] || img404} width={80} height={60} alt="" />
+          <Image src={cover.images[0] || img404} width={80} height={60} alt="" />
         );
       },
     },

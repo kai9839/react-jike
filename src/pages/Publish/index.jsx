@@ -14,9 +14,31 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState, useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { useSearchParams, useNavigate } from "react-router-dom";
 const Publish = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  console.log(searchParams);
+  const articleId = searchParams.get("id");
   // 获取频道列表
   const [channels, setChannels] = useState([]);
+  const [form] = Form.useForm();
+  useEffect(() => {
+    async function getArticle() {
+      const res = await http.get(`/mp/articles/${articleId}`);
+      const { cover, ...formData } = res.data;
+
+      form.setFieldsValue({ ...formData, type: cover.type });
+
+      if (cover.images) {
+        setImageType(cover.type);
+        setImagesList(cover.images.map((url) => ({ url })));
+      }
+    }
+    if (articleId) {
+      getArticle();
+    }
+  }, [articleId, form]);
   useEffect(() => {
     async function fetchChannels() {
       const res = await http.get("/channels");
@@ -33,14 +55,25 @@ const Publish = () => {
   };
 
   // 封面类型
-  const [imageType, setImageType] = useState('1');
+  const [imageType, setImageType] = useState("1");
   const onImageTypeChange = (e) => {
     setImageType(e.target.value);
-    if (e.target.value == '1') {
-      setImagesList(cacheImageList.current[0]?[cacheImageList.current[0]]:[]);
+    if (e.target.value === "1") {
+      setImagesList(
+        cacheImageList.current[0] ? [cacheImageList.current[0]] : []
+      );
     } else {
       setImagesList(cacheImageList.current);
     }
+  };
+  const formatUrl = (list) => {
+    return list.map(item => {
+      if (item.response) {
+        return item.response.data.url
+      } else {
+        return item.url
+      }
+    })
   };
   /**
    * 发布文章时触发的异步函数
@@ -49,7 +82,8 @@ const Publish = () => {
    * @param {Object} FormData - 包含用户填写的文章信息，如标题、频道ID和内容
    */
   const onFinish = async (FormData) => {
-    if (imageType !== imagesList.length) return message.warning('图片类型和数量不一致')
+    if (imageType !== imagesList.length)
+      return message.warning("图片类型和数量不一致");
     const { title, channel_id, content } = FormData;
     const params = {
       title,
@@ -57,11 +91,16 @@ const Publish = () => {
       content,
       cover: {
         type: imageType,
-        images: imagesList.map(item => item.response.data.url),
+        images: formatUrl(imagesList),
       },
     };
-    await http.post("/mp/articles?draft=false", params);
-    message.success("发布文章成功");
+    if (articleId) {
+      await http.put(`/mp/articles/${articleId}?draft=false`, params);
+    } else {
+      await http.post("/mp/articles?draft=false", params);
+    }
+    message.success(`${articleId ? "编辑" : "发布"}文章成功`);
+    navigate("/article");
   };
 
   return (
@@ -71,12 +110,13 @@ const Publish = () => {
           <Breadcrumb
             items={[
               { title: "首页", Link: "/" },
-              { title: "文章管理", Link: "/publish" },
+              { title: articleId ? "编辑文章" : "发布文章" },
             ]}
           ></Breadcrumb>
         }
       >
         <Form
+          form={form}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 1 }}
@@ -148,7 +188,7 @@ const Publish = () => {
 
           <Form.Item wrapperCol={{ offset: 4 }}>
             <Button size="large" type="primary" htmlType="submit">
-              发布文章
+              {articleId ? "编辑文章" : "发布文章"}
             </Button>
           </Form.Item>
         </Form>
